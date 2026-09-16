@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class SignupPage extends StatefulWidget {
@@ -8,427 +9,669 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final formKey = GlobalKey<FormState>();
 
-  String? nameError;
-  String? emailError;
-  String? passwordError;
-  String? confirmPasswordError;
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
-  void createAccount() {
+  bool hidePassword = true;
+  bool hideConfirmPassword = true;
+
+  String passwordStrength = '';
+  Color strengthColor = Colors.transparent;
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  void checkPasswordStrength(String password) {
     setState(() {
-      nameError = null;
-      emailError = null;
-      passwordError = null;
-      confirmPasswordError = null;
-
-      // التحقق من الاسم
-      if (nameController.text.isEmpty) {
-        nameError = 'يرجى إدخال الاسم';
-      }
-
-      // التحقق من البريد الإلكتروني
-      if (emailController.text.isEmpty) {
-        emailError = 'يرجى إدخال البريد الإلكتروني';
-      } else if (!emailController.text.contains('@')) {
-        emailError = 'البريد الإلكتروني غير صحيح';
-      }
-
-      // التحقق من كلمة المرور
-      if (passwordController.text.isEmpty) {
-        passwordError = 'يرجى إدخال كلمة المرور';
-      } else if (passwordController.text.length < 6) {
-        passwordError = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
-      }
-
-      // التحقق من تأكيد كلمة المرور
-      if (confirmPasswordController.text.isEmpty) {
-        confirmPasswordError = 'يرجى تأكيد كلمة المرور';
-      } else if (confirmPasswordController.text !=
-          passwordController.text) {
-        confirmPasswordError = 'كلمتا المرور غير متطابقتين';
+      if (password.isEmpty) {
+        passwordStrength = '';
+        strengthColor = Colors.transparent;
+      } else if (password.length < 6) {
+        passwordStrength = 'ضعيفة';
+        strengthColor = Colors.red;
+      } else if (password.length < 9) {
+        passwordStrength = 'متوسطة';
+        strengthColor = Colors.orange;
+      } else {
+        passwordStrength = 'قوية';
+        strengthColor = const Color(0xFF3E4F3D);
       }
     });
   }
 
+  void createAccount() {
+    if (formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم إنشاء الحساب بنجاح'),
+        ),
+      );
+
+      Navigator.pop(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
+    const Color cream = Color(0xFFFFF4E6);
+    const Color burgundy = Color(0xFF6D2536);
+    const Color darkBrown = Color(0xFF49372E);
 
-      child: Scaffold(
-        backgroundColor: const Color(0xffF8F3EC),
+    return Scaffold(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // =========================
+          // Background
+          // =========================
+          Image.asset(
+            'assets/images/login_background.png',
+            fit: BoxFit.cover,
+          ),
 
-        appBar: AppBar(
-          backgroundColor: const Color(0xffF8F3EC),
-          elevation: 0,
+          Container(
+            color: Colors.black.withOpacity(0.06),
+          ),
 
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-
-            icon: const Icon(
-              Icons.arrow_back_ios_new,
-              color: Color(0xff6D2536),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withOpacity(0.04),
+                  Colors.black.withOpacity(0.15),
+                ],
+              ),
             ),
           ),
-        ),
 
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(22, 5, 22, 30),
-
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // اللوقو
-                Center(
-                  child: Image.asset(
-                    'assets/images/lamha_logo.png',
-                    width: 100,
-                  ),
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 22,
+                  vertical: 24,
                 ),
-
-                const SizedBox(height: 10),
-
-                const Text(
-                  'إنشاء حساب',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 29,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff6D2536),
-                  ),
-                ),
-
-                const SizedBox(height: 6),
-
-                const Text(
-                  'أنشئ حسابك وابدأ تجربتك مع لمحة',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xff9A7A76),
-                  ),
-                ),
-
-                const SizedBox(height: 25),
-
-                // كرت إنشاء الحساب
-                Container(
-                  padding: const EdgeInsets.all(22),
-
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(25),
-
-                    border: Border.all(
-                      color: const Color(0xffE8D9D0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(32),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(
+                      sigmaX: 20,
+                      sigmaY: 20,
                     ),
-
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x246D2536),
-                        blurRadius: 20,
-                        offset: Offset(0, 8),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.fromLTRB(
+                        24,
+                        24,
+                        24,
+                        20,
                       ),
-                    ],
-                  ),
-
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // الاسم
-                      const Text(
-                        'الاسم',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xff6D2536),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.30),
+                        borderRadius: BorderRadius.circular(32),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.60),
+                          width: 1.2,
                         ),
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      TextField(
-                        controller: nameController,
-                        textAlign: TextAlign.right,
-
-                        decoration: InputDecoration(
-                          hintText: 'أدخل الاسم',
-                          errorText: nameError,
-
-                          prefixIcon: const Icon(
-                            Icons.person_outline,
-                            color: Color(0xff6D2536),
-                          ),
-
-                          filled: true,
-                          fillColor: const Color(0xffFFFDFC),
-
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-
-                            borderSide: BorderSide(
-                              color: nameError != null
-                                  ? Colors.red
-                                  : const Color(0xffE5D5CC),
-                            ),
-                          ),
-
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-
-                            borderSide: const BorderSide(
-                              color: Colors.red,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 18),
-
-                      // البريد الإلكتروني
-                      const Text(
-                        'البريد الإلكتروني',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xff6D2536),
-                        ),
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      TextField(
-                        controller: emailController,
-                        textAlign: TextAlign.right,
-                        keyboardType: TextInputType.emailAddress,
-
-                        decoration: InputDecoration(
-                          hintText: 'example@email.com',
-                          errorText: emailError,
-
-                          prefixIcon: const Icon(
-                            Icons.email_outlined,
-                            color: Color(0xff6D2536),
-                          ),
-
-                          filled: true,
-                          fillColor: const Color(0xffFFFDFC),
-
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-
-                            borderSide: BorderSide(
-                              color: emailError != null
-                                  ? Colors.red
-                                  : const Color(0xffE5D5CC),
-                            ),
-                          ),
-
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-
-                            borderSide: const BorderSide(
-                              color: Colors.red,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 18),
-
-                      // كلمة المرور
-                      const Text(
-                        'كلمة المرور',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xff6D2536),
-                        ),
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      TextField(
-                        controller: passwordController,
-                        textAlign: TextAlign.right,
-                        obscureText: true,
-
-                        decoration: InputDecoration(
-                          hintText: '6 أحرف على الأقل',
-                          errorText: passwordError,
-
-                          prefixIcon: const Icon(
-                            Icons.lock_outline,
-                            color: Color(0xff6D2536),
-                          ),
-
-                          filled: true,
-                          fillColor: const Color(0xffFFFDFC),
-
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-
-                            borderSide: BorderSide(
-                              color: passwordError != null
-                                  ? Colors.red
-                                  : const Color(0xffE5D5CC),
-                            ),
-                          ),
-
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-
-                            borderSide: const BorderSide(
-                              color: Colors.red,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 18),
-
-                      // تأكيد كلمة المرور
-                      const Text(
-                        'تأكيد كلمة المرور',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xff6D2536),
-                        ),
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      TextField(
-                        controller: confirmPasswordController,
-                        textAlign: TextAlign.right,
-                        obscureText: true,
-
-                        decoration: InputDecoration(
-                          hintText: 'أعد إدخال كلمة المرور',
-                          errorText: confirmPasswordError,
-
-                          prefixIcon: const Icon(
-                            Icons.lock_outline,
-                            color: Color(0xff6D2536),
-                          ),
-
-                          filled: true,
-                          fillColor: const Color(0xffFFFDFC),
-
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-
-                            borderSide: BorderSide(
-                              color: confirmPasswordError != null
-                                  ? Colors.red
-                                  : const Color(0xffE5D5CC),
-                            ),
-                          ),
-
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-
-                            borderSide: const BorderSide(
-                              color: Colors.red,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 25),
-
-                      // زر إنشاء الحساب
-                      SizedBox(
-                        height: 55,
-
-                        child: ElevatedButton(
-                          onPressed: createAccount,
-
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xff6D2536),
-                            foregroundColor: Colors.white,
-                            elevation: 7,
-                            shadowColor: const Color(0x806D2536),
-
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-
-                          child: const Text(
-                            'إنشاء الحساب',
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'لديك حساب؟',
-                            style: TextStyle(
-                              color: Color(0xff85736F),
-                            ),
-                          ),
-
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-
-                            child: const Text(
-                              'تسجيل الدخول',
-                              style: TextStyle(
-                                color: Color(0xff6D2536),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.12),
+                            blurRadius: 30,
+                            offset: const Offset(0, 12),
                           ),
                         ],
                       ),
-                    ],
+
+                      // =========================
+                      // Form
+                      // =========================
+                      child: Form(
+                        key: formKey,
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              'assets/images/palm_logo.png',
+                              width: 42,
+                              height: 48,
+                              fit: BoxFit.contain,
+                              color: darkBrown,
+                            ),
+
+                            const SizedBox(height: 4),
+
+                            const Text(
+                              'لمحة',
+                              style: TextStyle(
+                                fontFamily: 'Rakkas',
+                                fontSize: 42,
+                                fontWeight: FontWeight.w400,
+                                color: darkBrown,
+                              ),
+                            ),
+
+                            const SizedBox(height: 2),
+
+                            const Text(
+                              'أنشئ حسابك',
+                              style: TextStyle(
+                                fontFamily: 'Amiri',
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: darkBrown,
+                              ),
+                            ),
+
+                            const SizedBox(height: 2),
+
+                            const Text(
+                              'ابدأ رحلتك مع لمحة',
+                              style: TextStyle(
+                                fontFamily: 'Amiri',
+                                fontSize: 16,
+                                color: Color(0xFF66564D),
+                              ),
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            // =========================
+                            // Name
+                            // =========================
+                            TextFormField(
+                              controller: nameController,
+                              textDirection: TextDirection.rtl,
+
+                              validator: (value) {
+                                if (value == null ||
+                                    value.trim().isEmpty) {
+                                  return 'الاسم مطلوب';
+                                }
+
+                                return null;
+                              },
+
+                              style: const TextStyle(
+                                color: darkBrown,
+                                fontSize: 16,
+                              ),
+
+                              decoration: buildDecoration(
+                                hint: 'الاسم',
+                                icon: Icons.person_outline,
+                                burgundy: burgundy,
+                                darkBrown: darkBrown,
+                              ),
+                            ),
+
+                            const SizedBox(height: 12),
+
+                            // =========================
+                            // Email
+                            // =========================
+                            TextFormField(
+                              controller: emailController,
+                              keyboardType:
+                                  TextInputType.emailAddress,
+                              textDirection: TextDirection.ltr,
+
+                              validator: (value) {
+                                if (value == null ||
+                                    value.trim().isEmpty) {
+                                  return 'البريد الإلكتروني مطلوب';
+                                }
+
+                                if (!value.contains('@')) {
+                                  return 'أدخل بريدًا إلكترونيًا صحيحًا';
+                                }
+
+                                return null;
+                              },
+
+                              style: const TextStyle(
+                                color: darkBrown,
+                                fontSize: 16,
+                              ),
+
+                              decoration: buildDecoration(
+                                hint: 'البريد الإلكتروني',
+                                icon: Icons.email_outlined,
+                                burgundy: burgundy,
+                                darkBrown: darkBrown,
+                              ),
+                            ),
+
+                            const SizedBox(height: 12),
+
+                            // =========================
+                            // Password
+                            // =========================
+                            TextFormField(
+                              controller: passwordController,
+                              obscureText: hidePassword,
+                              onChanged: checkPasswordStrength,
+
+                              validator: (value) {
+                                if (value == null ||
+                                    value.isEmpty) {
+                                  return 'كلمة المرور مطلوبة';
+                                }
+
+                                if (value.length < 6) {
+                                  return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+                                }
+
+                                return null;
+                              },
+
+                              style: const TextStyle(
+                                color: darkBrown,
+                                fontSize: 16,
+                              ),
+
+                              decoration: InputDecoration(
+                                hintText: 'كلمة المرور',
+                                hintTextDirection:
+                                    TextDirection.rtl,
+
+                                hintStyle: const TextStyle(
+                                  fontFamily: 'Amiri',
+                                  color: Color(0xFF796A61),
+                                ),
+
+                                errorStyle: const TextStyle(
+                                  fontFamily: 'Amiri',
+                                  fontSize: 13,
+                                  color: Colors.red,
+                                ),
+
+                                prefixIcon: const Icon(
+                                  Icons.lock_outline,
+                                  color: darkBrown,
+                                ),
+
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      hidePassword =
+                                          !hidePassword;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    hidePassword
+                                        ? Icons
+                                            .visibility_off_outlined
+                                        : Icons
+                                            .visibility_outlined,
+                                    color: darkBrown,
+                                  ),
+                                ),
+
+                                filled: true,
+                                fillColor:
+                                    Colors.white.withOpacity(0.34),
+
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(17),
+                                  borderSide: BorderSide(
+                                    color: Colors.white
+                                        .withOpacity(0.65),
+                                  ),
+                                ),
+
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(17),
+                                  borderSide: const BorderSide(
+                                    color: burgundy,
+                                    width: 1.3,
+                                  ),
+                                ),
+
+                                errorBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(17),
+                                  borderSide: const BorderSide(
+                                    color: Colors.red,
+                                    width: 1.3,
+                                  ),
+                                ),
+
+                                focusedErrorBorder:
+                                    OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(17),
+                                  borderSide: const BorderSide(
+                                    color: Colors.red,
+                                    width: 1.5,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            if (passwordStrength.isNotEmpty) ...[
+                              const SizedBox(height: 7),
+
+                              Directionality(
+                                textDirection: TextDirection.rtl,
+                                child: Row(
+                                  children: [
+                                    const Text(
+                                      'قوة كلمة المرور: ',
+                                      style: TextStyle(
+                                        fontFamily: 'Amiri',
+                                        fontSize: 14,
+                                        color: darkBrown,
+                                      ),
+                                    ),
+                                    Text(
+                                      passwordStrength,
+                                      style: TextStyle(
+                                        fontFamily: 'Amiri',
+                                        fontSize: 14,
+                                        fontWeight:
+                                            FontWeight.bold,
+                                        color: strengthColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+
+                            const SizedBox(height: 12),
+
+                            // =========================
+                            // Confirm Password
+                            // =========================
+                            TextFormField(
+                              controller:
+                                  confirmPasswordController,
+                              obscureText:
+                                  hideConfirmPassword,
+
+                              validator: (value) {
+                                if (value == null ||
+                                    value.isEmpty) {
+                                  return 'تأكيد كلمة المرور مطلوب';
+                                }
+
+                                if (value !=
+                                    passwordController.text) {
+                                  return 'كلمتا المرور غير متطابقتين';
+                                }
+
+                                return null;
+                              },
+
+                              style: const TextStyle(
+                                color: darkBrown,
+                                fontSize: 16,
+                              ),
+
+                              decoration: InputDecoration(
+                                hintText: 'تأكيد كلمة المرور',
+                                hintTextDirection:
+                                    TextDirection.rtl,
+
+                                hintStyle: const TextStyle(
+                                  fontFamily: 'Amiri',
+                                  color: Color(0xFF796A61),
+                                ),
+
+                                errorStyle: const TextStyle(
+                                  fontFamily: 'Amiri',
+                                  fontSize: 13,
+                                  color: Colors.red,
+                                ),
+
+                                prefixIcon: const Icon(
+                                  Icons.lock_reset_outlined,
+                                  color: darkBrown,
+                                ),
+
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      hideConfirmPassword =
+                                          !hideConfirmPassword;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    hideConfirmPassword
+                                        ? Icons
+                                            .visibility_off_outlined
+                                        : Icons
+                                            .visibility_outlined,
+                                    color: darkBrown,
+                                  ),
+                                ),
+
+                                filled: true,
+                                fillColor:
+                                    Colors.white.withOpacity(0.34),
+
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(17),
+                                  borderSide: BorderSide(
+                                    color: Colors.white
+                                        .withOpacity(0.65),
+                                  ),
+                                ),
+
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(17),
+                                  borderSide: const BorderSide(
+                                    color: burgundy,
+                                    width: 1.3,
+                                  ),
+                                ),
+
+                                errorBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(17),
+                                  borderSide: const BorderSide(
+                                    color: Colors.red,
+                                    width: 1.3,
+                                  ),
+                                ),
+
+                                focusedErrorBorder:
+                                    OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(17),
+                                  borderSide: const BorderSide(
+                                    color: Colors.red,
+                                    width: 1.5,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            // =========================
+                            // Create Account
+                            // =========================
+                            Container(
+                              width: double.infinity,
+                              height: 52,
+                              decoration: BoxDecoration(
+                                color: burgundy,
+                                borderRadius:
+                                    BorderRadius.circular(17),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color:
+                                        burgundy.withOpacity(0.16),
+                                    blurRadius: 9,
+                                    offset:
+                                        const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: createAccount,
+                                  borderRadius:
+                                      BorderRadius.circular(17),
+                                  child: const Center(
+                                    child: Text(
+                                      'أنشئ حسابك',
+                                      style: TextStyle(
+                                        fontFamily: 'Amiri',
+                                        fontSize: 18,
+                                        fontWeight:
+                                            FontWeight.bold,
+                                        color: cream,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 15),
+
+                            Directionality(
+                              textDirection: TextDirection.rtl,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.center,
+                                mainAxisSize:
+                                    MainAxisSize.min,
+                                children: [
+                                  const Text(
+                                    'عندك حساب؟',
+                                    style: TextStyle(
+                                      fontFamily: 'Amiri',
+                                      fontSize: 15,
+                                      color: darkBrown,
+                                    ),
+                                  ),
+
+                                  const SizedBox(width: 4),
+
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    style:
+                                        TextButton.styleFrom(
+                                      padding:
+                                          const EdgeInsets
+                                              .symmetric(
+                                        horizontal: 4,
+                                      ),
+                                      minimumSize: Size.zero,
+                                      tapTargetSize:
+                                          MaterialTapTargetSize
+                                              .shrinkWrap,
+                                    ),
+                                    child: const Text(
+                                      'سجّل دخولك',
+                                      style: TextStyle(
+                                        fontFamily: 'Amiri',
+                                        fontSize: 15,
+                                        fontWeight:
+                                            FontWeight.bold,
+                                        color: burgundy,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-
-                const SizedBox(height: 20),
-              ],
+              ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  // =========================
+  // Shared Field Design
+  // =========================
+  InputDecoration buildDecoration({
+    required String hint,
+    required IconData icon,
+    required Color burgundy,
+    required Color darkBrown,
+  }) {
+    return InputDecoration(
+      hintText: hint,
+      hintTextDirection: TextDirection.rtl,
+
+      hintStyle: const TextStyle(
+        fontFamily: 'Amiri',
+        color: Color(0xFF796A61),
+      ),
+
+      errorStyle: const TextStyle(
+        fontFamily: 'Amiri',
+        fontSize: 13,
+        color: Colors.red,
+      ),
+
+      prefixIcon: Icon(
+        icon,
+        color: darkBrown,
+      ),
+
+      filled: true,
+      fillColor: Colors.white.withOpacity(0.34),
+
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(17),
+        borderSide: BorderSide(
+          color: Colors.white.withOpacity(0.65),
+        ),
+      ),
+
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(17),
+        borderSide: BorderSide(
+          color: burgundy,
+          width: 1.3,
+        ),
+      ),
+
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(17),
+        borderSide: const BorderSide(
+          color: Colors.red,
+          width: 1.3,
+        ),
+      ),
+
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(17),
+        borderSide: const BorderSide(
+          color: Colors.red,
+          width: 1.5,
         ),
       ),
     );
