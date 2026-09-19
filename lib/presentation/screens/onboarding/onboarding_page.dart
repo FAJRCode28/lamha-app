@@ -18,19 +18,19 @@ class _OnboardingPageState extends State<OnboardingPage> {
       'image': 'assets/images/onboarding1.jpg',
       'title': 'اعرف المكان قبل ما تروح',
       'description':
-          'شوف الزحمة، المواقف، الأوقات، وأهم التفاصيل قبل ما تطلع.',
+          'شوف الزحمة، المواقف، الأوقات، وأهم التفاصيل قبل ما تطلع',
     },
     {
       'image': 'assets/images/onboarding2.jpg',
       'title': 'اكتشف أماكن جديدة',
       'description':
-          'وجهات مختارة وتجارب مميزة تساعدك تختار المكان المناسب لك.',
+          'وجهات مختارة وتجارب مميزة تساعدك تختار المكان المناسب لك',
     },
     {
       'image': 'assets/images/onboarding3.jpg',
       'title': 'كل اللي تحتاجه في مكان واحد',
       'description':
-          'كل التفاصيل المهمة اللي تحتاجها قبل ما تروح، في مكان واحد.',
+          'كل التفاصيل المهمة اللي تحتاجها قبل ما تروح، في مكان واحد',
     },
   ];
 
@@ -62,24 +62,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
           return Stack(
             fit: StackFit.expand,
             children: [
-              // =========================
-              // Background Image
-              // =========================
+             
               Image.asset(
                 item['image']!,
                 fit: BoxFit.cover,
               ),
 
-              // =========================
-              // Dark Overlay
-              // =========================
               Container(
                 color: Colors.black.withOpacity(0.18),
               ),
 
-              // =========================
-              // Bottom Gradient
-              // =========================
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -99,9 +91,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 ),
               ),
 
-              // =========================
-              // Content
-              // =========================
               SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -112,9 +101,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     children: [
                       const Spacer(),
 
-                      // =========================
-                      // Title
-                      // =========================
                       Text(
                         item['title']!,
                         textAlign: TextAlign.center,
@@ -135,10 +121,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
 
                       const SizedBox(height: 12),
-
-                      // =========================
-                      // Description
-                      // =========================
                       Text(
                         item['description']!,
                         textAlign: TextAlign.center,
@@ -159,9 +141,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
                       const SizedBox(height: 26),
 
-                      // =========================
-                      // Page Indicators
-                      // =========================
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(
@@ -191,9 +170,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
                       const SizedBox(height: 24),
 
-                      // =========================
-                      // Start - Last Page Only
-                      // =========================
                       if (currentPage ==
                           onboardingData.length - 1)
                         SizedBox(

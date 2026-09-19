@@ -9,12 +9,20 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  String animatedTitle = '';
+  bool showTagline = false;
+  bool showBottomText = false;
+
+  final String title = 'لمحة';
+
   @override
   void initState() {
     super.initState();
 
+    startAnimation();
+
     Future.delayed(
-      const Duration(seconds: 11),
+      const Duration(seconds: 8),
       () {
         if (!mounted) return;
 
@@ -26,6 +34,44 @@ class _SplashPageState extends State<SplashPage> {
         );
       },
     );
+  }
+
+  Future<void> startAnimation() async {
+    await Future.delayed(
+      const Duration(milliseconds: 700),
+    );
+
+    for (int i = 0; i < title.length; i++) {
+      if (!mounted) return;
+
+      setState(() {
+        animatedTitle += title[i];
+      });
+
+      await Future.delayed(
+        const Duration(milliseconds: 350),
+      );
+    }
+
+    await Future.delayed(
+      const Duration(milliseconds: 300),
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      showTagline = true;
+    });
+
+    await Future.delayed(
+      const Duration(milliseconds: 600),
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      showBottomText = true;
+    });
   }
 
   @override
@@ -77,66 +123,124 @@ class _SplashPageState extends State<SplashPage> {
                 children: [
                   const Spacer(flex: 4),
 
-                  Image.asset(
-                    'assets/images/palm_logo.png',
-                    width: 68,
-                    height: 78,
-                    fit: BoxFit.contain,
-                    color: mainCream,
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(
+                      begin: 0.0,
+                      end: 1.0,
+                    ),
+                    duration: const Duration(
+                      milliseconds: 900,
+                    ),
+                    curve: Curves.easeOutBack,
+                    builder: (context, value, child) {
+                      return Opacity(
+                        opacity: value.clamp(0.0, 1.0),
+                        child: Transform.scale(
+                          scale: 0.8 + (0.2 * value),
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: Image.asset(
+                      'assets/images/palm_logo.png',
+                      width: 68,
+                      height: 78,
+                      fit: BoxFit.contain,
+                      color: mainCream,
+                    ),
                   ),
 
                   const SizedBox(height: 10),
 
-                  const Text(
-                    'لمحة',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'Rakkas',
-                      fontSize: 72,
-                      fontWeight: FontWeight.w400,
-                      height: 1.1,
-                      color: Color(0xFFFFF4E6),
-                      shadows: [
-                        Shadow(
-                          color: Colors.black38,
-                          blurRadius: 10,
-                          offset: Offset(0, 3),
+                  SizedBox(
+                    height: 80,
+                    child: Center(
+                      child: AnimatedSwitcher(
+                        duration: const Duration(
+                          milliseconds: 250,
                         ),
-                      ],
+                        transitionBuilder:
+                            (child, animation) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                        child: Text(
+                          animatedTitle,
+                          key: ValueKey(animatedTitle),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontFamily: 'Rakkas',
+                            fontSize: 72,
+                            fontWeight: FontWeight.w400,
+                            height: 1.1,
+                            color: Color(0xFFFFF4E6),
+                            shadows: [
+                              Shadow(
+                                color: Colors.black38,
+                                blurRadius: 10,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
 
                   const SizedBox(height: 12),
 
-                  const Text(
-                    'اعرف قبل ما تروح',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'Amiri',
-                      fontSize: 21,
-                      fontWeight: FontWeight.w400,
-                      height: 1.4,
-                      color: softCream,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black26,
-                          blurRadius: 6,
-                          offset: Offset(0, 2),
+                  AnimatedOpacity(
+                    opacity: showTagline ? 1 : 0,
+                    duration: const Duration(
+                      milliseconds: 800,
+                    ),
+                    child: AnimatedSlide(
+                      offset: showTagline
+                          ? Offset.zero
+                          : const Offset(0, 0.25),
+                      duration: const Duration(
+                        milliseconds: 800,
+                      ),
+                      curve: Curves.easeOut,
+                      child: const Text(
+                        'اعرف قبل ما تروح',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: 'Amiri',
+                          fontSize: 21,
+                          fontWeight: FontWeight.w400,
+                          height: 1.4,
+                          color: softCream,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black26,
+                              blurRadius: 6,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
 
                   const Spacer(flex: 5),
 
-                  const Text(
-                    'رحلتك تبدأ من لمحة',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'Amiri',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: bottomCream,
+                  AnimatedOpacity(
+                    opacity: showBottomText ? 1 : 0,
+                    duration: const Duration(
+                      milliseconds: 900,
+                    ),
+                    child: const Text(
+                      'رحلتك تبدأ من لمحة',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Amiri',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: bottomCream,
+                      ),
                     ),
                   ),
 

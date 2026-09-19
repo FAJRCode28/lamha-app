@@ -86,7 +86,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
   @override
   Widget build(BuildContext context) {
     const Color background = Color(0xFFFCFAF8);
-    const Color burgundy = Color(0xFF6D2536);
     const Color darkBrown = Color(0xFF49372E);
     const Color softBrown = Color(0xFF796A61);
     const Color parkingBlue = Color(0xFF607D8B);
@@ -142,7 +141,12 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
             // إذا فيه أماكن محفوظة
             : SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
+                padding: const EdgeInsets.fromLTRB(
+                  20,
+                  10,
+                  20,
+                  30,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -185,7 +189,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => PlaceDetailsPage(
+                                builder: (context) =>
+                                    PlaceDetailsPage(
                                   name: place.name,
                                   category: place.category,
                                   rating: place.rating,
@@ -417,7 +422,9 @@ class _FavoriteCard extends StatelessWidget {
                       const SizedBox(width: 8),
                       const Text(
                         '•',
-                        style: TextStyle(color: softBrown),
+                        style: TextStyle(
+                          color: softBrown,
+                        ),
                       ),
                       const SizedBox(width: 8),
                       const Icon(
