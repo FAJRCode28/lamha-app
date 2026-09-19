@@ -1,17 +1,53 @@
-# lamha_app
+LAMHA | لمحة 🇸🇦
 
-A new Flutter project.
+### اعرف قبل ما تروح | Know Before You Go
 
-## Getting Started
+LAMHA is a Flutter application that helps users discover places and know useful information before visiting them.
 
-This project is a starting point for a Flutter application.
+The app provides information about places such as crowd level, parking availability, opening hours, family suitability, and nearby activities.
 
-A few resources to get you started if this is your first Flutter project:
+ Features
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- User registration and login
+- Personalized user profile
+- Discover places based on the selected city
+- Search for places
+- View place details
+- Crowd and parking information
+- Opening hours and family suitability
+- Save favorite places
+- View nearby places
+- Open locations on maps
+- Manage city and interests
+- Notification preferences
+- Suggest a new place
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Technologies Used
+
+- Flutter
+- Dart
+- Supabase
+- BLoC / Cubit
+- Dio
+- Geoapify API
+- REST API
+
+ Project Structure
+
+The project is organized into separate folders for:
+
+- Screens
+- Widgets
+- Models
+- Services
+- Cubit and States
+- Configuration
+
+ API Configuration
+
+The Geoapify API key is not stored directly in the source code.
+
+Run the application using:
+
+```bash
+flutter run --dart-define=GEOAPIFY_API_KEY=YOUR_API_KEY
