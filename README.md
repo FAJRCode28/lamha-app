@@ -1,10 +1,22 @@
-LAMHA | لمحة 🇸🇦
+LAMHA | لمحة
 
-### اعرف قبل ما تروح | Know Before You Go
+عرف قبل ما تروح | Know Before You Go
+
+ Project Idea
 
 LAMHA is a Flutter application that helps users discover places and know useful information before visiting them.
 
-The app provides information about places such as crowd level, parking availability, opening hours, family suitability, and nearby activities.
+The app provides information such as crowd level, parking availability, opening hours, family suitability, and nearby activities.
+
+ Problem
+
+People may visit a place without knowing whether it is crowded, whether parking is available, or whether the place is suitable for them.
+
+LAMHA brings useful information together in one application to help users get a quick overview before they go.
+
+ Target Users
+
+LAMHA is designed for residents, visitors, and tourists who want to discover places and get useful information before visiting them.
 
  Features
 
@@ -21,8 +33,9 @@ The app provides information about places such as crowd level, parking availabil
 - Manage city and interests
 - Notification preferences
 - Suggest a new place
+- Loading and error states with retry support
 
-Technologies Used
+ Technologies Used
 
 - Flutter
 - Dart
@@ -34,7 +47,7 @@ Technologies Used
 
  Project Structure
 
-The project is organized into separate folders for:
+The project uses a simple and organized structure with separate folders for:
 
 - Screens
 - Widgets
